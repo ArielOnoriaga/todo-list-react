@@ -1,23 +1,25 @@
-import React, {
-  useState
+import {
+  useState,
+  ReactElement,
 } from 'react';
-import Todo from './Todo.tsx';
-import TodoForm from './TodoForm.tsx';
 
-const TodoList = () => {
-  const [todos, setTodos] = useState([]);
+import Todo from './Todo';
+import TodoForm from './TodoForm';
 
-  const isInvalidName = ({ name }): boolean => {
+const TodoList = (): ReactElement => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const isInvalidName = ({ name }: Todo): boolean => {
     const todoNameValidator = /^\s+$/;
 
     return !name || todoNameValidator.test(name);
   }
 
-  const addTodo = (todo): void => {
+  const addTodo = (todo: Todo): void => {
     if(isInvalidName(todo))
       return;
 
-    const newTodos = [...todos, todo];
+    const newTodos: Todo[] = [...todos, todo];
     setTodos(newTodos);
   }
 
@@ -39,27 +41,38 @@ const TodoList = () => {
     setTodos(updatedTodos);
   };
 
-  const editTodo = (todoId, newValue): void => {
+  const editTodo = (todoId: number, newValue: Todo): void => {
     if(isInvalidName(newValue)) return;
 
-    setTodos(previusTodos => previusTodos.map(todo => todo.id === todoId ? newValue : todo));
+    setTodos(previusTodos =>
+      previusTodos.map(todo =>
+          todo.id === todoId
+            ? newValue
+            : todo
+      )
+    );
   }
 
   return (
-    <div>
+    <>
       <h1>
         What's the Plan for Today
       </h1>
 
       <TodoForm onSubmit={addTodo} />
 
-      <Todo
-        todos={todos}
-        completeTodo={completeTodo}
-        removeTodo={removeTodo}
-        editTodo={editTodo}
-      />
-    </div>
+      {
+        todos.map((todo: Todo, index: number) =>
+          <Todo
+            todo={todo}
+            index={index}
+            completeTodo={completeTodo}
+            removeTodo={removeTodo}
+            editTodo={editTodo}
+          />
+        )
+      }
+    </>
   )
 }
 

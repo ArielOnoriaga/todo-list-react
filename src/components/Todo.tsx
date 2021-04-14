@@ -1,18 +1,27 @@
-import React, {
-  useState
+import {
+  useState,
+  ReactElement,
 } from 'react';
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiEdit } from "react-icons/ti";
 
-import TodoForm from "./TodoForm.tsx";
+import TodoForm from "./TodoForm";
 
-const Todo = ({ todos, completeTodo, removeTodo, editTodo }) => {
-  const [edit, setEdit] = useState({
+interface Props {
+  todo: Todo;
+  index: number;
+  completeTodo: Function;
+  removeTodo: Function;
+  editTodo: Function;
+}
+
+const Todo = ({ todo, index, completeTodo, removeTodo, editTodo }: Props): ReactElement => {
+  const [edit, setEdit] = useState<Todo>({
     id: null,
     name: ''
   });
 
-  const submitUpdate = (newValue): void => {
+  const submitUpdate = (newValue: Todo): void => {
     editTodo(edit.id, newValue);
 
     setEdit({
@@ -21,14 +30,12 @@ const Todo = ({ todos, completeTodo, removeTodo, editTodo }) => {
     });
   }
 
-  return todos.map((todo, index) => {
     return edit.id !== null && todo.id === edit.id
     ? <TodoForm
         edit={edit}
         onSubmit={submitUpdate}
       />
-    : (
-      <div
+    : <div
         className={
           todo.isComplete
             ? 'todo-row complete'
@@ -49,6 +56,7 @@ const Todo = ({ todos, completeTodo, removeTodo, editTodo }) => {
             onClick={() => removeTodo(todo.id)}
             className="delete-icon"
           />
+
           <TiEdit
             onClick={() => setEdit({
               id: todo.id,
@@ -58,8 +66,6 @@ const Todo = ({ todos, completeTodo, removeTodo, editTodo }) => {
           />
         </div>
       </div>
-    )
-  })
 }
 
-export default Todo
+export default Todo;

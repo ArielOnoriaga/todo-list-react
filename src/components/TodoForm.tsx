@@ -1,19 +1,26 @@
-import React, {
+import {
   useState,
   useEffect,
   useRef,
+  ReactElement,
 } from 'react';
 
-const TodoForm = ({ onSubmit, edit }) => {
+interface Props {
+  onSubmit: Function;
+  edit?: Todo;
+}
+
+const TodoForm = ({ onSubmit, edit }: Props): ReactElement => {
   const [input, setInput] = useState(edit?.name ? edit.name : '');
 
   const inputRef = useRef(null);
 
   useEffect((): void => {
-    inputRef.current.focus();
+    //@ts-ignore
+    inputRef?.current?.focus();
   });
 
-  const handlerSubmit = (evt): void => {
+  const handlerSubmit = (evt: any): void => {
     evt.preventDefault();
 
     onSubmit({
@@ -24,7 +31,13 @@ const TodoForm = ({ onSubmit, edit }) => {
     setInput('');
   };
 
-  const handlerChange = (evt): void => {
+  const buttonDetail = {
+    text: edit?.name ? 'Edit' : 'Add',
+    input: edit?.name ? 'todo-input edit' : 'todo-input',
+    button: edit?.name ? 'todo-button edit' : 'todo-button'
+  };
+
+  const handlerChange = (evt: any): void => {
     setInput(evt.target.value);
   }
 
@@ -33,48 +46,22 @@ const TodoForm = ({ onSubmit, edit }) => {
       onSubmit={handlerSubmit}
       className="todo-form"
     >
-      {
-        edit
-        ? (
-          <>
-            <input
-              type="text"
-              placeholder="Add todo"
-              value={input}
-              name="text"
-              onChange={handlerChange}
-              className="todo-input"
-              ref={inputRef}
-            />
+      <input
+        type="text"
+        placeholder={buttonDetail.text}
+        value={input}
+        name="text"
+        onChange={handlerChange}
+        className={buttonDetail.input}
+        ref={inputRef}
+      />
 
-              <button
-                type="submit"
-                className="todo-button"
-              >
-              Edit
-            </button>
-          </>
-        ) : (
-          <>
-            <input
-              type="text"
-              placeholder="Add todo"
-              value={input}
-              name="text"
-              onChange={handlerChange}
-              className="todo-input"
-              ref={inputRef}
-            />
-
-              <button
-                type="submit"
-                className="todo-button"
-              >
-              Add
-            </button>
-          </>
-        )
-      }
+        <button
+          type="submit"
+          className={buttonDetail.button}
+        >
+        { buttonDetail.text }
+      </button>
     </form>
   )
 };
